@@ -4,39 +4,42 @@ import 'package:playground_1/main.dart';
 
 class MyHomePage extends ConsumerWidget {
   const MyHomePage({super.key});
-  void onChg(WidgetRef ref, String value) {
-    ref.read(userProvider.notifier).updateName(value);
-  }
-
-  void onChgAge(WidgetRef ref, String value) {
-    ref.read(userProvider.notifier).updateNameAge(int.parse(value));
-  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final user = ref.watch(userProvider);
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(user.name),
-      ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          TextField(
-            onSubmitted: (value) {
-              onChg(ref, value);
-            },
+    return ref.watch(fetchUserProvider).when(
+      data: (data) {
+        return Scaffold(
+          appBar: AppBar(
+            title: Text(data.name),
           ),
-          TextField(
-            onSubmitted: (value) {
-              onChgAge(ref, value);
-            },
+          body: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Center(
+                child: Text(data.email),
+              ),
+            ],
           ),
-          Center(
-            child: Text(user.age.toString()),
+        );
+      },
+      error: (error, stackTrace) {
+        return Scaffold(
+            appBar: AppBar(
+              title: Text(error.toString()),
+            ),
+            body: Center(
+              child: Text(error.toString()),
+            ));
+      },
+      loading: () {
+        return Scaffold(
+          appBar: AppBar(
+            title: const Text('Title'),
           ),
-        ],
-      ),
+          body: const Center(child: CircularProgressIndicator()),
+        );
+      },
     );
   }
 }
