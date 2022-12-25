@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:http/http.dart' as http;
 
 @immutable
 class User {
@@ -68,3 +69,15 @@ class User {
 //     state = state.copyWith(age: a);
 //   }
 // }
+final userRepositoryProvider = Provider(
+  (ref) {
+    return UserRepository();
+  },
+);
+
+class UserRepository {
+  Future<User> fetchData() {
+    const url = 'https://jsonplaceholder.typicode.com/users/1';
+    return http.get(Uri.parse(url)).then((value) => User.fromJson(value.body));
+  }
+}
